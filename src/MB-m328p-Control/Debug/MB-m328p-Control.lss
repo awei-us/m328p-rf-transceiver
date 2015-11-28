@@ -1,0 +1,256 @@
+
+MB-m328p-Control.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000017c  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bss          00000002  00800100  00800100  000001f0  2**0
+                  ALLOC
+  2 .stab         00000b34  00000000  00000000  000001f0  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  3 .stabstr      00000792  00000000  00000000  00000d24  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 34 00 	jmp	0x68	; 0x68 <__ctors_end>
+   4:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+   8:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+   c:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  10:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  14:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  18:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  1c:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  20:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  24:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  28:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  2c:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  30:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  34:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  38:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  3c:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  40:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  44:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  48:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  4c:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  50:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  54:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  58:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  5c:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  60:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+  64:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
+
+00000068 <__ctors_end>:
+  68:	11 24       	eor	r1, r1
+  6a:	1f be       	out	0x3f, r1	; 63
+  6c:	cf ef       	ldi	r28, 0xFF	; 255
+  6e:	d8 e0       	ldi	r29, 0x08	; 8
+  70:	de bf       	out	0x3e, r29	; 62
+  72:	cd bf       	out	0x3d, r28	; 61
+
+00000074 <__do_clear_bss>:
+  74:	11 e0       	ldi	r17, 0x01	; 1
+  76:	a0 e0       	ldi	r26, 0x00	; 0
+  78:	b1 e0       	ldi	r27, 0x01	; 1
+  7a:	01 c0       	rjmp	.+2      	; 0x7e <.do_clear_bss_start>
+
+0000007c <.do_clear_bss_loop>:
+  7c:	1d 92       	st	X+, r1
+
+0000007e <.do_clear_bss_start>:
+  7e:	a2 30       	cpi	r26, 0x02	; 2
+  80:	b1 07       	cpc	r27, r17
+  82:	e1 f7       	brne	.-8      	; 0x7c <.do_clear_bss_loop>
+  84:	0e 94 48 00 	call	0x90	; 0x90 <main>
+  88:	0c 94 bc 00 	jmp	0x178	; 0x178 <_exit>
+
+0000008c <__bad_interrupt>:
+  8c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+00000090 <main>:
+void initDevice(void);
+
+int ledON = 0;
+
+int main(void)
+{
+  90:	df 93       	push	r29
+  92:	cf 93       	push	r28
+  94:	cd b7       	in	r28, 0x3d	; 61
+  96:	de b7       	in	r29, 0x3e	; 62
+	USART_Init(MYUBRR);
+  98:	8f e9       	ldi	r24, 0x9F	; 159
+  9a:	91 e0       	ldi	r25, 0x01	; 1
+  9c:	0e 94 6d 00 	call	0xda	; 0xda <USART_Init>
+	initDevice();
+  a0:	0e 94 58 00 	call	0xb0	; 0xb0 <initDevice>
+
+	while(1)
+	{
+		if(TCNT1 > 7999998)
+  a4:	84 e8       	ldi	r24, 0x84	; 132
+  a6:	90 e0       	ldi	r25, 0x00	; 0
+  a8:	fc 01       	movw	r30, r24
+  aa:	80 81       	ld	r24, Z
+  ac:	91 81       	ldd	r25, Z+1	; 0x01
+				ledON = 0;
+				break;
+			}
+		}
+
+	}
+  ae:	fa cf       	rjmp	.-12     	; 0xa4 <main+0x14>
+
+000000b0 <initDevice>:
+
+	return 0;
+}
+
+void initDevice(void)
+{
+  b0:	df 93       	push	r29
+  b2:	cf 93       	push	r28
+  b4:	cd b7       	in	r28, 0x3d	; 61
+  b6:	de b7       	in	r29, 0x3e	; 62
+	TCCR1B |= (1 << CS10);
+  b8:	81 e8       	ldi	r24, 0x81	; 129
+  ba:	90 e0       	ldi	r25, 0x00	; 0
+  bc:	21 e8       	ldi	r18, 0x81	; 129
+  be:	30 e0       	ldi	r19, 0x00	; 0
+  c0:	f9 01       	movw	r30, r18
+  c2:	20 81       	ld	r18, Z
+  c4:	21 60       	ori	r18, 0x01	; 1
+  c6:	fc 01       	movw	r30, r24
+  c8:	20 83       	st	Z, r18
+	DDRD = 0xFF;
+  ca:	8a e2       	ldi	r24, 0x2A	; 42
+  cc:	90 e0       	ldi	r25, 0x00	; 0
+  ce:	2f ef       	ldi	r18, 0xFF	; 255
+  d0:	fc 01       	movw	r30, r24
+  d2:	20 83       	st	Z, r18
+
+	return;
+}
+  d4:	cf 91       	pop	r28
+  d6:	df 91       	pop	r29
+  d8:	08 95       	ret
+
+000000da <USART_Init>:
+
+void USART_Init(unsigned int ubrr)
+{
+  da:	df 93       	push	r29
+  dc:	cf 93       	push	r28
+  de:	00 d0       	rcall	.+0      	; 0xe0 <USART_Init+0x6>
+  e0:	cd b7       	in	r28, 0x3d	; 61
+  e2:	de b7       	in	r29, 0x3e	; 62
+  e4:	9a 83       	std	Y+2, r25	; 0x02
+  e6:	89 83       	std	Y+1, r24	; 0x01
+	UBRR0H = (unsigned char) (ubrr >> 8);
+  e8:	85 ec       	ldi	r24, 0xC5	; 197
+  ea:	90 e0       	ldi	r25, 0x00	; 0
+  ec:	29 81       	ldd	r18, Y+1	; 0x01
+  ee:	3a 81       	ldd	r19, Y+2	; 0x02
+  f0:	23 2f       	mov	r18, r19
+  f2:	33 27       	eor	r19, r19
+  f4:	fc 01       	movw	r30, r24
+  f6:	20 83       	st	Z, r18
+	UBRR0L = (unsigned char) ubrr;
+  f8:	84 ec       	ldi	r24, 0xC4	; 196
+  fa:	90 e0       	ldi	r25, 0x00	; 0
+  fc:	29 81       	ldd	r18, Y+1	; 0x01
+  fe:	fc 01       	movw	r30, r24
+ 100:	20 83       	st	Z, r18
+
+	UCSR0B = (1 << RXEN0) | (1 << TXEN0);
+ 102:	81 ec       	ldi	r24, 0xC1	; 193
+ 104:	90 e0       	ldi	r25, 0x00	; 0
+ 106:	28 e1       	ldi	r18, 0x18	; 24
+ 108:	fc 01       	movw	r30, r24
+ 10a:	20 83       	st	Z, r18
+	UCSR0C = (1 << USBS0) | (3 << UCSZ00);
+ 10c:	82 ec       	ldi	r24, 0xC2	; 194
+ 10e:	90 e0       	ldi	r25, 0x00	; 0
+ 110:	2e e0       	ldi	r18, 0x0E	; 14
+ 112:	fc 01       	movw	r30, r24
+ 114:	20 83       	st	Z, r18
+
+	return;
+}
+ 116:	0f 90       	pop	r0
+ 118:	0f 90       	pop	r0
+ 11a:	cf 91       	pop	r28
+ 11c:	df 91       	pop	r29
+ 11e:	08 95       	ret
+
+00000120 <USART_Transmit>:
+
+void USART_Transmit(unsigned char data)
+{
+ 120:	df 93       	push	r29
+ 122:	cf 93       	push	r28
+ 124:	0f 92       	push	r0
+ 126:	cd b7       	in	r28, 0x3d	; 61
+ 128:	de b7       	in	r29, 0x3e	; 62
+ 12a:	89 83       	std	Y+1, r24	; 0x01
+	while (!(UCSR0A & (1 << UDRE0)))
+ 12c:	00 00       	nop
+ 12e:	80 ec       	ldi	r24, 0xC0	; 192
+ 130:	90 e0       	ldi	r25, 0x00	; 0
+ 132:	fc 01       	movw	r30, r24
+ 134:	80 81       	ld	r24, Z
+ 136:	88 2f       	mov	r24, r24
+ 138:	90 e0       	ldi	r25, 0x00	; 0
+ 13a:	80 72       	andi	r24, 0x20	; 32
+ 13c:	90 70       	andi	r25, 0x00	; 0
+ 13e:	00 97       	sbiw	r24, 0x00	; 0
+ 140:	b1 f3       	breq	.-20     	; 0x12e <USART_Transmit+0xe>
+		;
+	UDR0 = data;
+ 142:	86 ec       	ldi	r24, 0xC6	; 198
+ 144:	90 e0       	ldi	r25, 0x00	; 0
+ 146:	29 81       	ldd	r18, Y+1	; 0x01
+ 148:	fc 01       	movw	r30, r24
+ 14a:	20 83       	st	Z, r18
+
+	return;
+}
+ 14c:	0f 90       	pop	r0
+ 14e:	cf 91       	pop	r28
+ 150:	df 91       	pop	r29
+ 152:	08 95       	ret
+
+00000154 <USART_Receive>:
+
+unsigned char USART_Receive(void)
+{
+ 154:	df 93       	push	r29
+ 156:	cf 93       	push	r28
+ 158:	cd b7       	in	r28, 0x3d	; 61
+ 15a:	de b7       	in	r29, 0x3e	; 62
+	while (!(UCSR0A & (1 << RXC0)))
+ 15c:	00 00       	nop
+ 15e:	80 ec       	ldi	r24, 0xC0	; 192
+ 160:	90 e0       	ldi	r25, 0x00	; 0
+ 162:	fc 01       	movw	r30, r24
+ 164:	80 81       	ld	r24, Z
+ 166:	88 23       	and	r24, r24
+ 168:	d4 f7       	brge	.-12     	; 0x15e <USART_Receive+0xa>
+		;
+	return UDR0;
+ 16a:	86 ec       	ldi	r24, 0xC6	; 198
+ 16c:	90 e0       	ldi	r25, 0x00	; 0
+ 16e:	fc 01       	movw	r30, r24
+ 170:	80 81       	ld	r24, Z
+}
+ 172:	cf 91       	pop	r28
+ 174:	df 91       	pop	r29
+ 176:	08 95       	ret
+
+00000178 <_exit>:
+ 178:	f8 94       	cli
+
+0000017a <__stop_program>:
+ 17a:	ff cf       	rjmp	.-2      	; 0x17a <__stop_program>
